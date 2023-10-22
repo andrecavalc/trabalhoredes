@@ -6,6 +6,9 @@ client_socket= socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 #conectar ao servidor
 client_socket.connect(("localhost",5555))
 
+# configurando timeout para 2 segundos
+client_socket.settimeout(2.0)
+
 #receber mensagem do servidor
 data_from_server=client_socket.recv(1024)
 print(data_from_server.decode("utf-8"))
@@ -27,10 +30,17 @@ try:
         #codifica msg de string para bytes
         msg_encoded = msg_seq.encode("utf-8")
         #envia msg do cliente para o servidor
-        data_from_server=client_socket.sendall(msg_encoded)
+        client_socket.sendall(msg_encoded)
+        #recebe confirmacao do recebimento da msg e printa na tela
+        confirmation=client_socket.recv(1024)
+        #decodifica a msg de bytes para string
+        msg_decoded = confirmation.decode("utf-8")
+        print(msg_decoded)
+
+except socket.timeout:
+    print("\nO server demorou muito a responder!")
 
 except KeyboardInterrupt:
-    #####################################
     print("\n\nO cliente encerrou a conexao com o servidor!")
     #estamos encerrando a conexão
     client_socket.close()

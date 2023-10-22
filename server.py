@@ -1,4 +1,5 @@
 import socket
+import time
 
 #isso é um socket(criação)
 #socket.AF_INET = IPv4
@@ -30,6 +31,15 @@ while True:
         break
     #printa msg decodificada
     print(msg_decoded)
+
+    #simular erro de timeout
+    # time.sleep(3)
+
+    #envia confirmacao que a msg chegou
+    msg_to_confirm = "\nChegou tudo certo aqui, visse servidor?!\n"
+    #codifica msg de string para bytes
+    msg_encoded = msg_to_confirm.encode("utf-8")
+    connection.sendall(msg_encoded)
 
 #estamos encerrando a conexão
 server_socket.close()
