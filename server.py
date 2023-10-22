@@ -1,5 +1,8 @@
 import socket
 import time
+import threading
+
+from __init__ import handle_client
 
 #isso é um socket(criação)
 #socket.AF_INET = IPv4
@@ -12,35 +15,20 @@ server_socket.bind(("localhost",5555))
 #agora o socket vai escutar
 server_socket.listen(5)
 
-#server aceita a conexão
-connection,address=server_socket.accept()
 
-#vamos dizer ao cliente que o sever aceitou a conexão(mandar mensagem)
-mensagem= "conexão aceita"
-connection.sendall(mensagem.encode("utf-8"))
+#se o usuario fizer algo de errado
+#exemplo: ctrl+c
+#entao exibe a msg da linha abaixo do except
+try:
+    while True:
+    #server aceita a conexão
+        connection,address=server_socket.accept()
 
-#recebimento dos pacotes
-while True:
-    #recebe msg do cliente
-    msg_received = connection.recv(1024)
-    #decodifica a msg de bytes para string
-    msg_decoded = msg_received.decode("utf-8")
-    #verifica se a msg ta vazia (ctrl+c)
-    if msg_decoded == "":
-        print("\nO cliente encerrou a conexao com o servidor!")
-        break
-    #printa msg decodificada
-    print(msg_decoded)
+        # Cria uma thread para lidar com o cliente
+        client_handler = threading.Thread(target=handle_client, args=(connection,))
+        client_handler.start()
 
-    #simular erro de timeout
-    # time.sleep(3)
-
-    #envia confirmacao que a msg chegou
-    msg_to_confirm = "\nChegou tudo certo aqui, visse servidor?!\n"
-    #codifica msg de string para bytes
-    msg_encoded = msg_to_confirm.encode("utf-8")
-    connection.sendall(msg_encoded)
-
-#estamos encerrando a conexão
-server_socket.close()
-connection.close()
+except KeyboardInterrupt:
+    print("\n\nO servidor foi descontinuado!")
+    #estamos encerrando a conexão
+    server_socket.close()
