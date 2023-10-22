@@ -21,6 +21,8 @@ print(data_from_server.decode("utf-8"))
 try:
     # numero de sequencia do pacote
     seq = 0
+    #captura nome do host
+    host = input("host: ")
     #envio dos pacotes
     while True:
         #sequência atual
@@ -28,7 +30,7 @@ try:
         #captura msg do usuario
         msg_inputed = input(f"{seq}º PACOTE A SER ENVIADO: ")
         #adiciona o numero de sequencia na msg
-        msg_seq = f"[{seq}] {msg_inputed}"
+        msg_seq = f"[{seq}] {msg_inputed}\nhost: {host}"
         msg_with_checksum = add_checksum(msg_seq)
         #envia msg do cliente para o servidor
         client_socket.sendall(msg_with_checksum)

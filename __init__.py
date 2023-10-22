@@ -13,9 +13,7 @@ def handle_client(connection):
         if msg == "":
             print(f"\nO cliente encerrou a conexao com o servidor!")
             break
-        if check == "NAK":
-            print(check)
-            break
+    
         #printa msg decodificada
         print(msg)
         print(check)
