@@ -14,4 +14,10 @@ server_socket.listen(5)
 #server aceita a conexão
 connection,address=server_socket.accept()
 
+#vamos dizer ao cliente que o sever aceitou a conexão(mandar mensagem)
+mensagem= "conexão aceita"
+connection.sendall(mensagem.encode("utf-8"))
+
+#estamos encerrando a conexão
 server_socket.close()
+connection.close()
