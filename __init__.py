@@ -8,14 +8,17 @@ def handle_client(connection):
     while True:
         #recebe msg do cliente
         msg_received = connection.recv(1024)
-        #decodifica a msg de bytes para string
-        msg_decoded = msg_received.decode("utf-8")
+        check, msg = check_checksum(msg_received.decode('utf-8'))
         #verifica se a msg ta vazia (ctrl+c)
-        if msg_decoded == "":
-            print("\nO cliente encerrou a conexao com o servidor!")
+        if msg == "":
+            print(f"\nO cliente encerrou a conexao com o servidor!")
+            break
+        if check == "NAK":
+            print(check)
             break
         #printa msg decodificada
-        print(msg_decoded)
+        print(msg)
+        print(check)
 
         #simular erro de timeout
         # time.sleep(3)
@@ -28,3 +31,23 @@ def handle_client(connection):
 
     #estamos encerrando a conexão
     connection.close()
+
+
+def compute_checksum(data):
+    return sum(data) % 256
+
+
+def add_checksum(data):
+    #codifica msg de string para bytes
+    checksum = compute_checksum(data.encode("utf-8"))
+    return f"{data}|{checksum}".encode("utf-8")
+
+
+def check_checksum(data):
+    if "|" not in data:
+        return (None, "")
+    msg, checksum = data.rsplit('|', 1)
+    #decodifica a msg de bytes para string e verifica
+    if compute_checksum(msg.encode("utf-8")) == int(checksum):
+        return ('ACK', msg)
+    return ('NAK', None)

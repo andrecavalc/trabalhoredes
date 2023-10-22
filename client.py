@@ -1,5 +1,7 @@
 import socket
 
+from __init__ import add_checksum
+
 #isso é um socket(criação)
 client_socket= socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
@@ -27,10 +29,9 @@ try:
         msg_inputed = input(f"{seq}º PACOTE A SER ENVIADO: ")
         #adiciona o numero de sequencia na msg
         msg_seq = f"[{seq}] {msg_inputed}"
-        #codifica msg de string para bytes
-        msg_encoded = msg_seq.encode("utf-8")
+        msg_with_checksum = add_checksum(msg_seq)
         #envia msg do cliente para o servidor
-        client_socket.sendall(msg_encoded)
+        client_socket.sendall(msg_with_checksum)
         #recebe confirmacao do recebimento da msg e printa na tela
         confirmation=client_socket.recv(1024)
         #decodifica a msg de bytes para string
